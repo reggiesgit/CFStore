@@ -5,7 +5,10 @@
  */
 package br.ufpr.cfstore.controller;
 
+import br.ufpr.cfstore.model.Produto;
 import java.io.IOException;
+import java.util.List;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -15,9 +18,10 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Este controller gerencia as ações da página inicial da loja, decidindo
  * buscas, adição ao carrinho, finalização de compras, etc...
+ *
  * @author Regis
  */
-@WebServlet(name = "LojaController", urlPatterns = {"/home"})
+@WebServlet(name = "LojaController", urlPatterns = {"/LojaController"})
 public class LojaController extends HttpServlet {
 
     /**
@@ -32,8 +36,26 @@ public class LojaController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        RequestDispatcher rd = null;
         
-        
+        /* Captura de parâmetros vindos do navegador, que definem as funções solicitadas pelo usuário. */
+        String reqFragmento = request.getParameter("fragmento");
+        String action = request.getParameter("action");
+
+        /* Decisões de ação */
+        switch (action) {
+            /* Busca produtos por nome, fornecedor, categoria, sub categoria, cor, etc... */
+            case "buscar":
+                Produto produto = new Produto();
+                List<Produto> dbProduto = produto.listarProdutos(reqFragmento);
+                if(!dbProduto.isEmpty()) {
+                    request.setAttribute("dbProdutos", dbProduto);
+                    rd = getServletContext().getRequestDispatcher("/home.jsp");
+                    rd.forward(request, response);
+                }
+                break;
+        }
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
