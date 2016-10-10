@@ -1,0 +1,14 @@
+Padrão de nomes das SPs no banco:
+
+SPxxyyzz onde {
+    SP = padrão para Stored Procedure
+    xx = número do Sprint
+    yy = número do UC
+    zz = número da função CRUD {
+        Create = 01
+        Read = 02
+        Update = 03
+        Delete = 04
+        Outros = numeral atual + 1
+    }
+}
