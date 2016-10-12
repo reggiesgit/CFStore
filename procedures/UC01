@@ -1,0 +1,16 @@
+CREATE PROCEDURE `SP010102`(
+    IN in_fragmento VARCHAR(50))
+BEGIN
+    IF in_fragmento = '' THEN
+        BEGIN
+            SELECT produto, precoReal
+            FROM produto;
+        END;
+    ELSE
+        BEGIN
+            SELECT produto, precoReal
+            FROM produto 
+            WHERE (lower(produto) LIKE CONCAT ('%', in_fragmento, '%'));
+        END;
+    END IF;
+END
