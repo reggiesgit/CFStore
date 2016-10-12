@@ -5,6 +5,7 @@
  */
 package br.ufpr.cfstore.controller;
 
+import br.ufpr.cfstore.model.ItemPedido;
 import br.ufpr.cfstore.model.Produto;
 import java.io.IOException;
 import java.util.List;
@@ -53,6 +54,18 @@ public class LojaController extends HttpServlet {
                     rd = getServletContext().getRequestDispatcher("/home.jsp");
                     rd.forward(request, response);
                 }
+                break;
+            /* Adiciona um item ao carrinho, que é identificado pelo ID da sessão */
+            case "addCarrinho":
+                int idToAdd = Integer.parseInt(request.getParameter("idToAdd"));
+                ItemPedido itemDoPedido = new ItemPedido();
+                Produto produtoDoItem = new Produto();
+                itemDoPedido.setId(request.getSession().getId());
+                produtoDoItem.setId(idToAdd);
+                itemDoPedido.setItem(produtoDoItem);
+                request.setAttribute("message", "Item adicionado com sucesso!");
+                rd = getServletContext().getRequestDispatcher("/mostrar.jsp");
+                rd.forward(request, response);
                 break;
         }
 

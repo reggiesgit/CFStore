@@ -20,15 +20,25 @@ import java.util.logging.Logger;
  * @author Regis
  */
 public class Produto {
+    private int id;
     private String nome;
     private String descricao;
     private boolean status;
     private double precoUnitario;
 
+    
     /*
     Início Getters and Setters.
-    */
-    public String getNome() {    
+     */
+    public int getId() {    
+        return id;
+    }
+    
+    public void setId(int id) {
+        this.id = id;    
+    }
+    
+    public String getNome() {
         return nome;
     }
 
@@ -73,13 +83,14 @@ public class Produto {
         Connection conn = null;
         
         try{
-            String sql = "CALL SP010101(?)";
+            String sql = "CALL SP010102(?)";
             conn = DBConnector.getConnection();
             CallableStatement stmt = conn.prepareCall(sql);
             stmt.setString(1, fragmento);
             ResultSet rs = stmt.executeQuery();
             while(rs.next()) {
                 Produto dbProduto = new Produto();
+                dbProduto.setId(Integer.parseInt(rs.getString("idProduto")));
                 dbProduto.setNome(rs.getString("produto"));
                 dbProduto.setPrecoUnitario(rs.getDouble("precoReal"));
                 variosProduto.add(dbProduto);
