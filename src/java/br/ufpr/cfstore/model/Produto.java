@@ -73,7 +73,7 @@ public class Produto {
         Connection conn = null;
         
         try{
-            String sql = "CALL SP010102(?)";
+            String sql = "CALL SP010101(?)";
             conn = DBConnector.getConnection();
             CallableStatement stmt = conn.prepareCall(sql);
             stmt.setString(1, fragmento);
