@@ -20,6 +20,7 @@ import java.util.logging.Logger;
  * @author Regis
  */
 public class Produto {
+    private int id;
     private String nome;
     private String descricao;
     private boolean status;
@@ -27,8 +28,16 @@ public class Produto {
 
     /*
     Início Getters and Setters.
-    */
-    public String getNome() {    
+     */    
+    public int getId() {    
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;    
+    }
+
+    public String getNome() {
         return nome;
     }
 
@@ -73,7 +82,7 @@ public class Produto {
         Connection conn = null;
         
         try{
-            String sql = "CALL SP010101(?)";
+            String sql = "CALL SP010102(?)";
             conn = DBConnector.getConnection();
             CallableStatement stmt = conn.prepareCall(sql);
             stmt.setString(1, fragmento);

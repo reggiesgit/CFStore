@@ -22,16 +22,24 @@
         <table>
             <caption>Produtos</caption><br/>
             <tr>
+                <td>Código</td>
                 <td>Nome</td>
                 <td>Preço</td>
+                <td>Açao</td>
             </tr>
             <c:forEach items="${dbProdutos}" var="produto" >
                 <tr>
+                    <td>
+                        <c:out value="${produto.id}" /><br/>
+                    </td>
                     <td>
                         <c:out value="${produto.nome}" /><br/>
                     </td>
                     <td>
                         <c:out value="${produto.precoUnitario}" /><br/>
+                    </td>
+                    <td>
+                        <a href="./LojaController?idToAdd=${produto.id}&action=addCarrinho">Adicionar ao carrinho!</a> <br/>
                     </td>
 
                 </tr>
