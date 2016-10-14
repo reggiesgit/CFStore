@@ -5,15 +5,25 @@
  */
 package br.ufpr.cfstore.model;
 
+import br.ufpr.cfstore.jdbc.DBConnector;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Esta classe define atributos e metodos de Pessoa.
  * @author Regis
  */
 public class Pessoa {
     private String nome;
+    private String sobrenome;
     private String email;
     private String telefone;
     private String documento;
+    private Date nascimento;
 
     public String getNome() {
         return nome;
@@ -21,6 +31,14 @@ public class Pessoa {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getSobrenome() {
+        return sobrenome;
+    }
+
+    public void setSobrenome(String sobrenome) {
+        this.sobrenome = sobrenome;
     }
 
     public String getEmail() {
@@ -46,5 +64,34 @@ public class Pessoa {
     public void setDocumento(String documento) {
         this.documento = documento;
     }
-    
+
+    public Date getNascimento() {
+        return nascimento;
+    }
+
+    public void setNascimento(Date nascimento) {
+        this.nascimento = nascimento;
+    }
+
+    public String salvarPessoa(Pessoa pessoa) {
+        Connection conn = null;
+        
+        try {
+            String sql = "CALL SP0202(?)";
+            conn = DBConnector.getConnection();
+            CallableStatement stmt = conn.prepareCall(sql);
+            stmt.setString(1, pessoa.getDocumento());
+            stmt.setString(2, pessoa.getNome());
+            stmt.setString(3, pessoa.getSobrenome());
+            stmt.setString(4, pessoa.getEmail());
+            stmt.executeQuery();
+            return "ok";
+        }catch (SQLException sqle) {
+            System.out.println("Erro ao efetuar a busca no banco de dados: " + sqle.getMessage());
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Produto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "lalal";
+    }
+
 }

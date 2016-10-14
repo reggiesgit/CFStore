@@ -45,5 +45,7 @@
                 </tr>
             </c:forEach>
         </table>
+        <br/>
+        <a href='pessoaCadastro.jsp' style="float:right; text-decoration: underline; color: #000; font-size: 150%">Cadastre-se</a><br/><br/>
     </body>
 </html>
