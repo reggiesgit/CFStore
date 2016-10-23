@@ -73,5 +73,9 @@ public class Endereco {
     public void setNumero(int numero) {
         this.numero = numero;
     }
+
+    public void salvarEndereco(Endereco endereco, String documento) {
+        
+    }
     
 }
