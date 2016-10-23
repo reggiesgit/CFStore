@@ -8,6 +8,7 @@ package br.ufpr.cfstore.model;
 import br.ufpr.cfstore.jdbc.DBConnector;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -82,7 +83,7 @@ public class Produto {
         Connection conn = null;
         
         try{
-            String sql = "CALL SP010102(?)";
+            String sql = "CALL SP0101(?)";
             conn = DBConnector.getConnection();
             CallableStatement stmt = conn.prepareCall(sql);
             stmt.setString(1, fragmento);
@@ -101,5 +102,63 @@ public class Produto {
             Logger.getLogger(Produto.class.getName()).log(Level.SEVERE, null, ex);
         }
         return variosProduto;
+    }
+    
+    
+    /**
+     * Este metodo busca as recomendacoes pelo id do produto"
+     * @param idProduto
+     * @return 
+     * @throws java.lang.ClassNotFoundException 
+     * @throws java.sql.SQLException 
+     */
+    public List<Produto> buscarRecomendacoes(int idProduto) throws ClassNotFoundException, SQLException{
+        Connection conn = null;
+        List<Produto> recomendacoes = new ArrayList();
+        String sql = "SELECT a.itemRecomendado as idProduto, b.produto, b.precoVenda from recomendacao a inner join \n" +
+                        "produto b on a.itemRecomendado = b.idProduto and a.item = ?;";
+        conn = DBConnector.getConnection();
+        
+         try{
+            conn = DBConnector.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, idProduto);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()) {
+                Produto dbProduto = new Produto();
+                dbProduto.setDescricao(rs.getString("produto"));
+                dbProduto.setPrecoUnitario(rs.getDouble("precoVenda"));
+                recomendacoes.add(dbProduto);
+            }
+            
+            
+        } catch (SQLException sqle) {
+            System.out.println("Erro ao efetuar a busca no banco de dados: " + sqle.getMessage());
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Produto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return recomendacoes;
+    }
+     /**
+     * Este metodo busca pelo id"
+     * @param idProduto
+     * @return 
+     * @throws java.lang.ClassNotFoundException 
+     * @throws java.sql.SQLException 
+     */
+    public Produto retornaProduto(int idProduto) throws ClassNotFoundException, SQLException{
+        Connection conn = null;
+        String sql = "SELECT produto, precoVenda from produto where idProduto = ?";
+        conn = DBConnector.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, idProduto);
+        ResultSet rs = stmt.executeQuery();
+        rs.next();
+        Produto p = new Produto();
+        p.setId(idProduto);
+        p.setDescricao(rs.getString("produto"));
+        p.setPrecoUnitario(rs.getFloat("precoVenda"));
+        
+        return p;
     }
 }
