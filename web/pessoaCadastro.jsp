@@ -23,7 +23,7 @@
             <input type="text" required="true" name="sobrenome" placeholder="Sobrenome" style="border: none; width: 80%; height: 40px"/><br/><br/>
             <input type="text" required="true" name="email" placeholder="E-Mail" style="border: none; width: 80%; height: 40px"/><br/><br/>
             <!--<input type="number" required="true" name="nascimento" placeholder="Data de nascimento" style="border: none; width: 80%; height: 40px"/><br/><br/>-->
-            Informações para entrega:<br/>
+            Informações endereço:<br/>
             <input type="number" required="true" name="cep" placeholder="CEP" style="border: none; width: 80%; height: 40px"/><br/><br/>
             <input type="text" required="true" name="rua" placeholder="Rua" style="border: none; width: 80%; height: 40px"/><br/><br/>
             <input type="number" required="true" name="numero" placeholder="Número" style="border: none; width: 80%; height: 40px"/><br/><br/>
