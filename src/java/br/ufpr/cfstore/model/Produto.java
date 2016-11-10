@@ -91,7 +91,7 @@ public class Produto {
             ResultSet rs = stmt.executeQuery();
             while(rs.next()) {
                 Produto dbProduto = new Produto();
-                dbProduto.setId(Integer.parseInt(rs.getString("produto")));
+                dbProduto.setId(Integer.parseInt(rs.getString("idProduto")));
                 dbProduto.setNome(rs.getString("produto"));
                 dbProduto.setPrecoUnitario(rs.getDouble("precoReal"));
                 variosProduto.add(dbProduto);
