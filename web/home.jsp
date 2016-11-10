@@ -43,22 +43,8 @@
                     </td>
 
                 </tr>
-
             </c:forEach>
-
         </table>
-        <div class="center">
-            <ul class="pagination">
-                <li><a href="#">&laquo;</a></li>
-                <li><a href="#">1</a></li>
-                <li><a href="#">2</a></li>
-                <li><a href="#">3</a></li>
-                <li><a href="#">4</a></li>
-                <li><a href="#">5</a></li>
-                <li><a href="#">6</a></li>
-                <li><a href="#">&raquo;</a></li>
-            </ul>
-        </div>
         <br/>
         <a href='pessoaCadastro.jsp' style="float:right; text-decoration: underline; color: #000; font-size: 150%">Cadastre-se</a><br/><br/>
     </body>
