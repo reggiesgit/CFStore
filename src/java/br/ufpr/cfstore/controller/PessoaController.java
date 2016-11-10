@@ -8,7 +8,8 @@ package br.ufpr.cfstore.controller;
 import br.ufpr.cfstore.model.Endereco;
 import br.ufpr.cfstore.model.Pessoa;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -35,6 +36,7 @@ public class PessoaController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         RequestDispatcher rd = null;
+        List<String> message = new ArrayList<>();
         
         /* Captura de parâmetros vindos do navegador, que definem as funções solicitadas pelo usuário. */
         String action = request.getParameter("action");
@@ -55,10 +57,27 @@ public class PessoaController extends HttpServlet {
                 endereco.setBairro(request.getParameter("bairro"));
                 endereco.setCidade(request.getParameter("cidade"));
                 endereco.setEstado(request.getParameter("estado"));
-                if (pessoa.salvarPessoa(pessoa).equals("ok"))
-                    endereco.salvarEndereco(endereco, pessoa.getDocumento());
+                /* Tenta salvar a pessoa no banco. Armazena o resultado da operação na variável 'message' */
+                message = (pessoa.salvarPessoa(pessoa));
+                /* Se o codigo do retorno for 'O', tenta salvar o endereço com a FK da pessoa */
+                if(message.get(0).equals("O")) {
+                    if (endereco.salvarEndereco(endereco, pessoa.getDocumento()).get(0).equals("O")) {
+                        /* Se chegou até aqui, é sinal que deu tudo certo, e pode retornar para o usuário */
+                        request.setAttribute("message", message.get(1));
+                        rd = getServletContext().getRequestDispatcher("/mostrar.jsp");
+                        rd.forward(request, response);
+                        break;
+                    }
+                    else {
+                        request.setAttribute("message", message.get(1));
+                        rd = getServletContext().getRequestDispatcher("/mostrar.jsp");
+                        rd.forward(request, response);
+                        break;
+                    }
+                    
+                }
                 else {
-                    request.setAttribute("message", "Este CPF já foi cadastrado!");
+                    request.setAttribute("message", message.get(1));
                     rd = getServletContext().getRequestDispatcher("/mostrar.jsp");
                     rd.forward(request, response);
                     break;

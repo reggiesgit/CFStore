@@ -8,8 +8,11 @@ package br.ufpr.cfstore.model;
 import br.ufpr.cfstore.jdbc.DBConnector;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -73,25 +76,29 @@ public class Pessoa {
         this.nascimento = nascimento;
     }
 
-    public String salvarPessoa(Pessoa pessoa) {
+    public List<String> salvarPessoa(Pessoa pessoa) {
         Connection conn = null;
-        
+        List<String> retorno = new ArrayList<>();
         try {
-            String sql = "CALL SP0202(?)";
+            String sql = "CALL SP0302(?,?,?,?,?,?)";
             conn = DBConnector.getConnection();
             CallableStatement stmt = conn.prepareCall(sql);
-            stmt.setString(1, pessoa.getDocumento());
+            stmt.setString(1, "1");
             stmt.setString(2, pessoa.getNome());
             stmt.setString(3, pessoa.getSobrenome());
-            stmt.setString(4, pessoa.getEmail());
-            stmt.executeQuery();
-            return "ok";
+            stmt.setString(4, pessoa.getDocumento());
+            stmt.setString(5, pessoa.getEmail());
+            stmt.setString(6, pessoa.getTelefone());
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            retorno.add(rs.getString("out_cod"));
+            retorno.add(rs.getString("out_msg"));
         }catch (SQLException sqle) {
             System.out.println("Erro ao efetuar a busca no banco de dados: " + sqle.getMessage());
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Produto.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return "lalal";
+        return retorno;
     }
 
 }

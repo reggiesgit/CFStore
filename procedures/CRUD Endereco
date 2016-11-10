@@ -1,0 +1,75 @@
+CREATE DEFINER=`rwright`@`%` PROCEDURE `SP0307`(
+/*-------------------------------------------------
+  DESCRIÇÃO DA FUNCIONALIDADE:
+  CRUD DE Endereço 
+  in_acao 1 = Create
+  in_acao 2 = Read
+  in_acao 3 = Update
+  in_acao 4 = (Delete) Ação indisponível.
+  RETORNOS:
+  out_cod O = Sucesso
+  out_cod E = Erro
+  out_cod A = Alerta
+  -------------------------------------------------*/
+    IN in_acao VARCHAR(1),
+    IN in_cep VARCHAR(45),
+    IN in_rua VARCHAR(45),
+    IN in_complemento VARCHAR(45),
+    IN in_bairro VARCHAR(45),
+    IN in_cidade VARCHAR(45),
+    IN in_estado VARCHAR(45),
+    IN in_numero INT(8),
+    IN in_documento VARCHAR(45),
+    IN in_cliente INT(11))
+BEGIN
+    DECLARE out_cod VARCHAR(1);
+    DECLARE out_msg VARCHAR(90);
+    IF in_acao = '1' THEN
+        BEGIN
+            INSERT INTO endereco (cep, rua, complemento, bairro, cidade, estado, numero)
+            VALUES (in_cep, in_rua, in_compelemento, in_bairro, in_cidade, in_estado, in_numero);
+            INSERT INTO cliente_endereco (idCliente, idEndereco)
+            VALUES ((SELECT idCliente FROM cliente WHERE documento = in_documento),
+                    (SELECT idEndereco FROM endereco WHERE cep = in_cep AND complemento = in_complemento AND numero = in_numero));
+                    SET out_cod = 'O';
+                    SET out_msg = 'Endereço inserido com sucesso!';
+        END;
+    ELSEIF in_acao = '2' THEN
+        BEGIN
+            IF EXISTS(SELECT idCliente FROM cliente WHERE documento = in_documento) THEN
+                SELECT e.* FROM endereco e
+                INNER JOIN cliente_endereco ce ON 
+                    e.idEndereco = idCliente AND
+                    ce.idCliente = in_cliente;
+            ELSE
+                SET out_cod = 'E';
+                SET out_msg = 'Registro de cliente não encontrado.';
+            END IF;
+        END;
+    ELSEIF in_acao = '3' THEN
+    BEGIN
+        IF EXISTS(SELECT idCliente FROM cliente WHERE documento = in_documento AND isAtivo = 1) THEN
+            UPDATE endereco 
+            SET cep = in_cep,
+                rua = in_rua,
+                complemento = in_complemento,
+                bairro = in_bairro,
+                cidade = in_cidade,
+                estado = in_estado,
+                numero = in_numero;
+            SET out_cod = 'O';
+            SET out_msg = 'Cadastro atualizado com sucesso!';
+        ELSEIF EXISTS(SELECT idCliente FROM cliente WHERE documento = in_documento AND isAtivo = 0) THEN
+            SET out_cod = 'A';
+            SET out_msg = 'Não foi possível atualizar. Este cadastro está inativo.';
+        ELSE
+            SET out_cod = 'E';
+            SET out_msg = 'Não foi possível atualizar seu cadastro. Por favor, tente novamente mais tarde.';
+        END IF;
+    END;
+    ELSE
+        SET out_cod = 'A';
+        SET out_msg = 'Ação não reconhecida.';
+    END IF;
+    SELECT out_cod, out_msg;
+END
