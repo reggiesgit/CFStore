@@ -42,13 +42,14 @@ public class LojaController extends HttpServlet {
         /* Captura de parâmetros vindos do navegador, que definem as funções solicitadas pelo usuário. */
         String reqFragmento = request.getParameter("fragmento");
         String action = request.getParameter("action");
+        int pagina = 1;
 
         /* Decisões de ação */
         switch (action) {
             /* Busca produtos por nome, fornecedor, categoria, sub categoria, cor, etc... */
             case "buscar":
                 Produto produto = new Produto();
-                List<Produto> dbProduto = produto.listarProdutos(reqFragmento);
+                List<Produto> dbProduto = produto.listarProdutos(reqFragmento, pagina);
                 if(!dbProduto.isEmpty()) {
                     request.setAttribute("dbProdutos", dbProduto);
                     rd = getServletContext().getRequestDispatcher("/home.jsp");

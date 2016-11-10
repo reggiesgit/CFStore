@@ -78,18 +78,20 @@ public class Produto {
      * @param fragmento
      * @return 
      */
-    public List<Produto> listarProdutos(String fragmento) {
+    public List<Produto> listarProdutos(String fragmento, int pagina) {
         List<Produto> variosProduto = new ArrayList();
         Connection conn = null;
         
         try{
-            String sql = "CALL SP0101(?)";
+            String sql = "CALL SP0101(?,?)";
             conn = DBConnector.getConnection();
             CallableStatement stmt = conn.prepareCall(sql);
             stmt.setString(1, fragmento);
+            stmt.setInt(2, pagina);
             ResultSet rs = stmt.executeQuery();
             while(rs.next()) {
                 Produto dbProduto = new Produto();
+                dbProduto.setId(Integer.parseInt(rs.getString("produto")));
                 dbProduto.setNome(rs.getString("produto"));
                 dbProduto.setPrecoUnitario(rs.getDouble("precoReal"));
                 variosProduto.add(dbProduto);
