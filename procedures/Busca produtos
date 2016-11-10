@@ -1,0 +1,29 @@
+CREATE DEFINER=`rwright`@`%` PROCEDURE `SP0101`(
+/*-------------------------------------------------
+  DESCRIÇÃO DA FUNCIONALIDADE:
+  Busca de produtos
+  in_fragmento = string identificadora de produto
+  in_pagina = número da página a ser exibida
+  RETORNOS:
+  Lista de 20 produtos, de acordo com a paginação solicitada
+  -------------------------------------------------*/
+	IN in_fragmento VARCHAR(50),
+    IN in_pagina INT)
+BEGIN
+	DECLARE epoint INT DEFAULT 0;
+    SET epoint = in_pagina * 20;
+	IF in_fragmento = '' THEN
+		BEGIN
+		SELECT idProduto, produto, precoReal
+        FROM produto
+        LIMIT epoint, 20;
+		END;
+	ELSE
+		BEGIN
+		SELECT idProduto, produto, precoReal
+        FROM produto 
+        WHERE (lower(produto) LIKE CONCAT ('%', in_fragmento, '%'))
+        LIMIT epoint, 20;
+        END;
+	END IF;
+END
