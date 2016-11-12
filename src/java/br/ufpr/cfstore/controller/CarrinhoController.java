@@ -6,8 +6,11 @@
 package br.ufpr.cfstore.controller;
 
 import br.ufpr.cfstore.model.ItemPedido;
+import br.ufpr.cfstore.model.Pessoa;
 import br.ufpr.cfstore.model.Produto;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -18,13 +21,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * Este controller gerencia as ações da página inicial da loja, decidindo
- * buscas, adição ao carrinho, finalização de compras, etc...
  *
  * @author Regis
  */
-@WebServlet(name = "LojaController", urlPatterns = {"/LojaController"})
-public class LojaController extends HttpServlet {
+@WebServlet(name = "CarrinhoController", urlPatterns = {"/CarrinhoController"})
+public class CarrinhoController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,35 +40,32 @@ public class LojaController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         RequestDispatcher rd = null;
-        
-        /* Captura de parâmetros vindos do navegador, que definem as funções solicitadas pelo usuário. */
         HttpSession session = request.getSession(false);
-        String reqFragmento = request.getParameter("fragmento");
         String action = request.getParameter("action");
-        int pagina = 1;
 
-        /* Decisões de ação */
-        switch (action) {
-            /* Busca produtos por nome, fornecedor, categoria, sub categoria, cor, etc... */
-            case "buscar":
+        switch (action) { 
+            /* Adiciona itens ao carrinho, que é identificado pelo ID da sessão se nenhum login estive ativo */
+            case "addCarrinho":
+                int idToAdd = Integer.parseInt(request.getParameter("idToAdd"));
+                int unidades = Integer.parseInt(request.getParameter("unidades"));
+                Pessoa usuario = new Pessoa();
+                usuario = (Pessoa) session.getAttribute("usuarioCorrente");
                 Produto produto = new Produto();
-                List<Produto> dbProdutos = produto.listarProdutos(reqFragmento, pagina);
-                if(!dbProdutos.isEmpty()) {
-                    request.setAttribute("dbProdutos", dbProdutos);
-                    rd = getServletContext().getRequestDispatcher("/home.jsp");
-                    rd.forward(request, response);
-                }
+                produto.adicionarNoCarrinho(session.getId(), usuario.getId(), idToAdd, unidades);
+                request.setAttribute("message", "Item adicionado com sucesso!");
+                rd = getServletContext().getRequestDispatcher("/mostrar.jsp");
+                rd.forward(request, response);
                 break;
-            /* Abre a página de detalhes do protudo selecionado, possibilita adicionar ao carrinho*/
-            case "verDetalhe":
-                int idDetalhe = Integer.parseInt(request.getParameter("idDetalhe"));
-                Produto dbProduto = new Produto();
-                List<Produto> recomendacao = dbProduto.buscarRecomendacoes(idDetalhe);
-                dbProduto = dbProduto.retornaProduto(idDetalhe);
-                request.setAttribute("produto", dbProduto);
-                rd = getServletContext().getRequestDispatcher("/detalhe.jsp");
-                rd.forward(request, response); 
+            /* Remove itens do carrinho, que é identificado pelo ID da sessão se nenhum login estiver ativo */
+            case "listar" :
+                ItemPedido pedidos = new ItemPedido();
+                pedidos = (ItemPedido) session.getAttribute("itens");
+                request.setAttribute("itens", pedidos);
+                rd = getServletContext().getRequestDispatcher("/carrinho.jsp");
+                rd.forward(request, response);
+                break;
         }
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

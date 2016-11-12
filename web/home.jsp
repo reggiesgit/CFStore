@@ -39,7 +39,7 @@
                         <c:out value="${produto.precoUnitario}" /><br/>
                     </td>
                     <td>
-                        <a href="./LojaController?idToAdd=${produto.id}&action=addCarrinho">Adicionar ao carrinho!</a> <br/>
+                        <a href="./LojaController?idDetalhe=${produto.id}&action=verDetalhe">Ver produto</a> <br/>
                     </td>
 
                 </tr>
@@ -59,5 +59,6 @@
         </div>
         <br/>
         <a href='pessoaCadastro.jsp' style="float:right; text-decoration: underline; color: #000; font-size: 150%">Cadastre-se</a><br/><br/>
+        <a href='./CarrinhoController?action=listar' style="float:right; text-decoration: underline; color: #000; font-size: 150%">Ver carrinho</a><br/><br/>
     </body>
 </html>
