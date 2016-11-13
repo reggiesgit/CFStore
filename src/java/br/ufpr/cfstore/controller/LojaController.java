@@ -15,6 +15,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * Este controller gerencia as ações da página inicial da loja, decidindo
@@ -40,6 +41,7 @@ public class LojaController extends HttpServlet {
         RequestDispatcher rd = null;
         
         /* Captura de parâmetros vindos do navegador, que definem as funções solicitadas pelo usuário. */
+        HttpSession session = request.getSession(false);
         String reqFragmento = request.getParameter("fragmento");
         String action = request.getParameter("action");
         int pagina = 1;
@@ -49,27 +51,23 @@ public class LojaController extends HttpServlet {
             /* Busca produtos por nome, fornecedor, categoria, sub categoria, cor, etc... */
             case "buscar":
                 Produto produto = new Produto();
-                List<Produto> dbProduto = produto.listarProdutos(reqFragmento, pagina);
-                if(!dbProduto.isEmpty()) {
-                    request.setAttribute("dbProdutos", dbProduto);
+                List<Produto> dbProdutos = produto.listarProdutos(reqFragmento, pagina);
+                if(!dbProdutos.isEmpty()) {
+                    request.setAttribute("dbProdutos", dbProdutos);
                     rd = getServletContext().getRequestDispatcher("/home.jsp");
                     rd.forward(request, response);
                 }
                 break;
-            /* Adiciona um item ao carrinho, que é identificado pelo ID da sessão */
-            case "addCarrinho":
-                int idToAdd = Integer.parseInt(request.getParameter("idToAdd"));
-                ItemPedido itemDoPedido = new ItemPedido();
-                Produto produtoDoItem = new Produto();
-                itemDoPedido.setId(request.getSession().getId());
-                produtoDoItem.setId(idToAdd);
-                itemDoPedido.setItem(produtoDoItem);
-                request.setAttribute("message", "Item adicionado com sucesso!");
-                rd = getServletContext().getRequestDispatcher("/mostrar.jsp");
-                rd.forward(request, response);
-                break;
+            /* Abre a página de detalhes do protudo selecionado, possibilita adicionar ao carrinho*/
+            case "verDetalhe":
+                int idDetalhe = Integer.parseInt(request.getParameter("idDetalhe"));
+                Produto dbProduto = new Produto();
+                List<Produto> recomendacao = dbProduto.buscarRecomendacoes(idDetalhe);
+                dbProduto = dbProduto.retornaProduto(idDetalhe);
+                request.setAttribute("produto", dbProduto);
+                rd = getServletContext().getRequestDispatcher("/detalhe.jsp");
+                rd.forward(request, response); 
         }
-
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

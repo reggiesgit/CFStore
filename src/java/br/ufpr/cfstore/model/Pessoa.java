@@ -21,12 +21,21 @@ import java.util.logging.Logger;
  * @author Regis
  */
 public class Pessoa {
+    private int id;
     private String nome;
     private String sobrenome;
     private String email;
     private String telefone;
     private String documento;
     private Date nascimento;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getNome() {
         return nome;
@@ -76,6 +85,11 @@ public class Pessoa {
         this.nascimento = nascimento;
     }
 
+    /**
+     * Este metodo persiste um objeto do tipo Pessoa no banco de dados.
+     * @param pessoa
+     * @return 
+     */
     public List<String> salvarPessoa(Pessoa pessoa) {
         Connection conn = null;
         List<String> retorno = new ArrayList<>();
