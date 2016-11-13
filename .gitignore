@@ -8,3 +8,4 @@ nbproject/project.properties
 nbproject/project.xml
 src/java/br/ufpr/cfstore/jdbc/DBConnector.java
 src/java/br/ufpr/cfstore/jdbc/DBConnector.java
+src/java/br/ufpr/cfstore/jdbc/DBConnector.java
