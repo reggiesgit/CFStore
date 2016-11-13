@@ -19,7 +19,6 @@ public class DBConnector {
     public static Connection getConnection() throws ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
         try {
-            return DriverManager.getConnection("jdbc:mysql://localhost/CFStore", "root", "root");
         } catch (SQLException sqle) {
             throw new RuntimeException(sqle);
         }
