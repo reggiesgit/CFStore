@@ -6,6 +6,7 @@
 package br.ufpr.cfstore.model;
 
 import br.ufpr.cfstore.jdbc.DBConnector;
+import java.io.Serializable;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,12 +21,14 @@ import java.util.logging.Logger;
  * Esta classe define atributos e metodos do Produto.
  * @author Regis
  */
-public class Produto {
+public class Produto implements Serializable {
     private int id;
     private String nome;
     private String descricao;
     private boolean status;
     private double precoUnitario;
+    private String imagem;
+    private String url;
 
     /*
     Início Getters and Setters.
@@ -90,6 +93,8 @@ public class Produto {
             ResultSet rs = stmt.executeQuery();
             while(rs.next()) {
                 Produto dbProduto = new Produto();
+               
+                
                 dbProduto.setNome(rs.getString("produto"));
                 dbProduto.setPrecoUnitario(rs.getDouble("precoReal"));
                 variosProduto.add(dbProduto);
@@ -115,7 +120,7 @@ public class Produto {
     public List<Produto> buscarRecomendacoes(int idProduto) throws ClassNotFoundException, SQLException{
         Connection conn = null;
         List<Produto> recomendacoes = new ArrayList();
-        String sql = "SELECT a.itemRecomendado as idProduto, b.produto, b.precoVenda from recomendacao a inner join \n" +
+        String sql = "SELECT a.itemRecomendado, b.produto, b.precoVenda from recomendacao a inner join \n" +
                         "produto b on a.itemRecomendado = b.idProduto and a.item = ?;";
         conn = DBConnector.getConnection();
         
@@ -126,8 +131,13 @@ public class Produto {
             ResultSet rs = stmt.executeQuery();
             while(rs.next()) {
                 Produto dbProduto = new Produto();
+                dbProduto.setId(rs.getInt("itemRecomendado"));
                 dbProduto.setDescricao(rs.getString("produto"));
                 dbProduto.setPrecoUnitario(rs.getDouble("precoVenda"));
+                dbProduto.setUrl("/CFStore/LojaController?action=exibir&id=" + dbProduto.getId());
+                String idItem = String.valueOf(dbProduto.id);
+                String img = "https://dpxzap9aaf4qu.cloudfront.net/" + idItem.substring(0, idItem.length() -2) +"00/" + idItem + "/" + idItem + "_18_zoom_180.jpg" ;
+                dbProduto.setImagem(img);
                 recomendacoes.add(dbProduto);
             }
             
@@ -158,7 +168,26 @@ public class Produto {
         p.setId(idProduto);
         p.setDescricao(rs.getString("produto"));
         p.setPrecoUnitario(rs.getFloat("precoVenda"));
-        
+        p.setUrl("/CFStore/LojaController?action=exibir&id=" + idProduto);
+        String idItem = String.valueOf(idProduto);
+        String img = "https://dpxzap9aaf4qu.cloudfront.net/" + idItem.substring(0, idItem.length() -2) +"00/" + idItem + "/" + idItem + "_18_zoom_180.jpg" ;
+        p.setImagem(img);
         return p;
+    }
+
+    public String getImagem() {
+        return imagem;
+    }
+
+    public void setImagem(String imagem) {
+        this.imagem = imagem;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

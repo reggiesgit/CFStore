@@ -8,7 +8,10 @@ package br.ufpr.cfstore.controller;
 import br.ufpr.cfstore.model.ItemPedido;
 import br.ufpr.cfstore.model.Produto;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -35,38 +38,57 @@ public class LojaController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        RequestDispatcher rd = null;
-        
-        /* Captura de parâmetros vindos do navegador, que definem as funções solicitadas pelo usuário. */
-        String reqFragmento = request.getParameter("fragmento");
-        String action = request.getParameter("action");
-
-        /* Decisões de ação */
-        switch (action) {
-            /* Busca produtos por nome, fornecedor, categoria, sub categoria, cor, etc... */
-            case "buscar":
-                Produto produto = new Produto();
-                List<Produto> dbProduto = produto.listarProdutos(reqFragmento);
-                if(!dbProduto.isEmpty()) {
-                    request.setAttribute("dbProdutos", dbProduto);
-                    rd = getServletContext().getRequestDispatcher("/home.jsp");
+            throws ServletException, IOException{
+        try {
+            response.setContentType("text/html;charset=UTF-8");
+            RequestDispatcher rd = null;
+            
+            /* Captura de parâmetros vindos do navegador, que definem as funções solicitadas pelo usuário. */
+            String reqFragmento = request.getParameter("fragmento");
+            String action = request.getParameter("action");
+            String id = request.getParameter("id");
+            
+            /* Decisões de ação */
+            switch (action) {
+                /* Busca produtos por nome, fornecedor, categoria, sub categoria, cor, etc... */
+                case "buscar":
+                    Produto produto = new Produto();
+                    List<Produto> dbProduto = produto.listarProdutos(reqFragmento);
+                    if(!dbProduto.isEmpty()) {
+                        request.setAttribute("dbProdutos", dbProduto);
+                        rd = getServletContext().getRequestDispatcher("/index.jsp?action=buscar");
+                        rd.forward(request, response);
+                    }
+                    break;
+                    /* Adiciona um item ao carrinho, que é identificado pelo ID da sessão */
+                case "addCarrinho":
+                    int idToAdd = Integer.parseInt(request.getParameter("idToAdd"));
+                    ItemPedido itemDoPedido = new ItemPedido();
+                    Produto produtoDoItem = new Produto();
+                    itemDoPedido.setId(request.getSession().getId());
+                    produtoDoItem.setId(idToAdd);
+                    itemDoPedido.setItem(produtoDoItem);
+                    request.setAttribute("message", "Item adicionado com sucesso!");
+                    rd = getServletContext().getRequestDispatcher("/mostrar.jsp");
                     rd.forward(request, response);
-                }
-                break;
-            /* Adiciona um item ao carrinho, que é identificado pelo ID da sessão */
-            case "addCarrinho":
-                int idToAdd = Integer.parseInt(request.getParameter("idToAdd"));
-                ItemPedido itemDoPedido = new ItemPedido();
-                Produto produtoDoItem = new Produto();
-                itemDoPedido.setId(request.getSession().getId());
-                produtoDoItem.setId(idToAdd);
-                itemDoPedido.setItem(produtoDoItem);
-                request.setAttribute("message", "Item adicionado com sucesso!");
-                rd = getServletContext().getRequestDispatcher("/mostrar.jsp");
-                rd.forward(request, response);
-                break;
+                    break;
+                case "exibir":
+                    Produto item = new Produto().retornaProduto(Integer.parseInt(id));
+                    request.setAttribute("item", item);
+                    String idItem = String.valueOf(item.getId());
+                    String imagem = "https://dpxzap9aaf4qu.cloudfront.net/" + idItem.substring(0, idItem.length() -2) +"00/" + idItem + "/" + idItem + "_18_zoom_180.jpg" ;
+                    item.setImagem(imagem);
+                    List<Produto> recomendacoes = item.buscarRecomendacoes(item.getId());
+                    request.setAttribute("recomendacoes", recomendacoes);
+                    rd = getServletContext().getRequestDispatcher("/index.jsp");    
+                    rd.forward(request, response);
+                  
+                    break;
+            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(LojaController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(LojaController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }

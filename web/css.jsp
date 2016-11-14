@@ -11,7 +11,6 @@
         border-collapse: collapse;
         width: 100%;
     }
-
     tr, td {
         padding: 8px;
         text-align: left;
