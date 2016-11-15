@@ -22,6 +22,8 @@
             <input type="text" required="true" name="nome" placeholder="Nome" style="border: none; width: 80%; height: 40px"/><br/><br/>
             <input type="text" required="true" name="sobrenome" placeholder="Sobrenome" style="border: none; width: 80%; height: 40px"/><br/><br/>
             <input type="text" required="true" name="email" placeholder="E-Mail" style="border: none; width: 80%; height: 40px"/><br/><br/>
+            <input type="text" required="true" name="senha1" placeholder="Informe uma senha" style="border: none; width: 80%; height: 40px"/><br/><br/>
+            <input type="text" required="true" name="senha2" placeholder="Confirmação da senha" style="border: none; width: 80%; height: 40px"/><br/><br/>
             <!--<input type="number" required="true" name="nascimento" placeholder="Data de nascimento" style="border: none; width: 80%; height: 40px"/><br/><br/>-->
             Informações endereço:<br/>
             <input type="number" required="true" name="cep" placeholder="CEP" style="border: none; width: 80%; height: 40px"/><br/><br/>
