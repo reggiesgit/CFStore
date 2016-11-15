@@ -104,7 +104,6 @@ public class Pessoa {
         Connection conn = null;
         List<String> retorno = new ArrayList<>();
         try {
-            String sql = "CALL SP0302(?,?,?,?,?,?)";
             String sql = "CALL SP0302(?,?,?,?,?,?,?)";
             conn = DBConnector.getConnection();
             CallableStatement stmt = conn.prepareCall(sql);
@@ -199,7 +198,5 @@ public class Pessoa {
         }
         return retorno;
     }
-
-    
 
 }
