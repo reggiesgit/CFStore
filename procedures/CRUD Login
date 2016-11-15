@@ -1,0 +1,48 @@
+CREATE DEFINER=`rwright`@`%` PROCEDURE `SP0305`(
+/*-------------------------------------------------
+  DESCRIÇÃO DA FUNCIONALIDADE:
+  CRUD DE AUTENTICAÇÂO 
+  in_acao 1 = Create
+  in_acao 2 = Read
+  in_acao 3 = Update
+  in_acao 4 = Delete
+  RETORNOS:
+  out_cod O = Sucesso
+  out_cod E = Erro
+  out_cod A = Alerta
+  -------------------------------------------------*/
+	IN in_acao VARCHAR(1),
+    IN in_email VARCHAR(45),
+    IN in_senha VARCHAR(45))
+BEGIN
+	DECLARE out_cod VARCHAR(1);
+	DECLARE out_msg VARCHAR(90);
+    
+	IF in_acao = '1' THEN
+		BEGIN
+			SET out_cod = 'A';
+            SET out_msg = 'Funcionalidade não disponível.';
+        END;
+	ELSEIF in_acao = '2' THEN
+		BEGIN
+			IF EXISTS(SELECT senha FROM identidades WHERE email = in_email) THEN
+				IF(SELECT senha FROM identidades WHERE email = in_email) = in_senha THEN
+					SET out_cod = 'O';
+                    SET out_msg = 'Sua sessão está iniciada!';
+				ELSE
+					SET out_cod = 'A';
+                    SET out_msg = 'A senha informada está incorreta. Por favor, tente novamente.';
+				END IF;
+			ELSE
+				SET out_cod = 'A';
+                SET out_msg = 'O e-mail informado está incorreto, ou não está cadastrado.';
+			END IF;
+        END;
+	ELSEIF in_acao = '3' THEN
+		BEGIN
+        END;
+	ELSEIF in_acao = '4' THEN
+		BEGIN
+        END;
+	END IF;
+END

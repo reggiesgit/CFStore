@@ -7,6 +7,7 @@ package br.ufpr.cfstore.controller;
 
 import br.ufpr.cfstore.model.Endereco;
 import br.ufpr.cfstore.model.Pessoa;
+import br.ufpr.cfstore.tools.Encrypter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,11 @@ public class PessoaController extends HttpServlet {
         /* Captura de parâmetros vindos do navegador, que definem as funções solicitadas pelo usuário. */
         String action = request.getParameter("action");
         
+        /* Criptografar senha */
+        Encrypter enc = new Encrypter();
+        String password = request.getParameter("senha");
+        enc.shuffle(password);
+        
         switch(action) {
             case "cadastrar" :
                 Pessoa pessoa = new Pessoa();
@@ -49,6 +55,7 @@ public class PessoaController extends HttpServlet {
                 pessoa.setNome(request.getParameter("nome"));
                 pessoa.setSobrenome(request.getParameter("sobrenome"));
                 pessoa.setEmail(request.getParameter("email"));
+                pessoa.setSenha(password);
                 pessoa.setTelefone(request.getParameter("celular"));
                 endereco.setCep(request.getParameter("CEP"));
                 endereco.setRua(request.getParameter("rua"));
