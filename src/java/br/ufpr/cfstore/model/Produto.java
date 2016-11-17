@@ -26,7 +26,8 @@ public class Produto {
     private String descricao;
     private boolean status;
     private double precoUnitario;
-
+    private String imagem;
+    private String url;
     /*
     Início Getters and Setters.
      */    
@@ -95,6 +96,10 @@ public class Produto {
             while(rs.next()) {
                 Produto dbProduto = new Produto();
                 dbProduto.setId(Integer.parseInt(rs.getString("idProduto")));
+                String idItem = String.valueOf(dbProduto.id);
+                String img = "https://dpxzap9aaf4qu.cloudfront.net/" + idItem.substring(0, idItem.length() -2) +"00/" + idItem + "/" + idItem + "_18_zoom_180.jpg" ;
+                dbProduto.setImagem(img);                
+                dbProduto.setUrl("Loja?action=exibir&id=" + idItem);
                 dbProduto.setNome(rs.getString("produto"));
                 dbProduto.setPrecoUnitario(rs.getDouble("precoReal"));
                 variosProduto.add(dbProduto);
@@ -115,11 +120,13 @@ public class Produto {
      * @param idProduto
      * @return 
      */
-    public List<Produto> buscarRecomendacoes(int idProduto) {
+    public List<Produto> buscarRecomendacoes(int idProduto) throws ClassNotFoundException, SQLException{
         Connection conn = null;
         List<Produto> recomendacoes = new ArrayList();
-        String sql = "SELECT a.itemRecomendado as idProduto, b.produto, b.precoVenda from recomendacao a inner join \n" +
+        String sql = "SELECT a.itemRecomendado, b.produto, b.precoVenda from recomendacao a inner join \n" +
                         "produto b on a.itemRecomendado = b.idProduto and a.item = ?;";
+        conn = DBConnector.getConnection();
+        
          try{
             conn = DBConnector.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -127,10 +134,17 @@ public class Produto {
             ResultSet rs = stmt.executeQuery();
             while(rs.next()) {
                 Produto dbProduto = new Produto();
+                dbProduto.setId(rs.getInt("itemRecomendado"));
                 dbProduto.setDescricao(rs.getString("produto"));
                 dbProduto.setPrecoUnitario(rs.getDouble("precoVenda"));
+                dbProduto.setUrl("/CFStore/Loja?action=exibir&id=" + dbProduto.getId());
+                String idItem = String.valueOf(dbProduto.id);
+                String img = "https://dpxzap9aaf4qu.cloudfront.net/" + idItem.substring(0, idItem.length() -2) +"00/" + idItem + "/" + idItem + "_18_zoom_180.jpg" ;
+                dbProduto.setImagem(img);
                 recomendacoes.add(dbProduto);
             }
+            
+            
         } catch (SQLException sqle) {
             System.out.println("Erro ao efetuar a busca no banco de dados: " + sqle.getMessage());
         } catch (ClassNotFoundException ex) {
@@ -143,28 +157,8 @@ public class Produto {
      * @param idProduto
      * @return 
      */
-    public Produto retornaProduto(int idProduto) {
-        Produto dbProduto = new Produto();
+    public Produto retornaProduto(int idProduto) throws ClassNotFoundException, SQLException{
         Connection conn = null;
-        try{
-            String sql = "CALL SP0101(?,?,?)";
-            conn = DBConnector.getConnection();
-            CallableStatement stmt = conn.prepareCall(sql);
-            stmt.setString(1, "");
-            stmt.setInt(2, 1);
-            stmt.setInt(3, idProduto);
-            ResultSet rs = stmt.executeQuery();
-            rs.next();
-            dbProduto.setId(Integer.parseInt(rs.getString("idProduto")));
-            dbProduto.setNome(rs.getString("produto"));
-            dbProduto.setPrecoUnitario(rs.getDouble("precoReal"));
-            return dbProduto;  
-        } catch (SQLException sqle) {
-            System.out.println("Erro ao efetuar a busca no banco de dados: " + sqle.getMessage());
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Produto.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    return dbProduto;
     }
     
     /**
@@ -233,5 +227,53 @@ public class Produto {
             Logger.getLogger(Produto.class.getName()).log(Level.SEVERE, null, ex);
         }
         return retorno;
+    }
+    public List <Produto> listarPorDepto(String depto, int p){
+    List<Produto> variosProduto = new ArrayList();
+        Connection conn = null;
+        
+        try{
+            String sql = "CALL listarPorDepto(?,?)";
+            conn = DBConnector.getConnection();
+            CallableStatement stmt = conn.prepareCall(sql);
+            stmt.setString(1, depto);
+            stmt.setInt(2, p);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()) {
+                Produto dbProduto = new Produto();
+                dbProduto.setId(Integer.parseInt(rs.getString("idProduto")));
+                String idItem = String.valueOf(dbProduto.id);
+                String img = "https://dpxzap9aaf4qu.cloudfront.net/" + idItem.substring(0, idItem.length() -2) +"00/" + idItem + "/" + idItem + "_18_zoom_180.jpg" ;
+                dbProduto.setImagem(img);                
+                dbProduto.setUrl("Loja?action=exibir&id=" + idItem);
+                dbProduto.setNome(rs.getString("produto"));
+                dbProduto.setPrecoUnitario(rs.getDouble("precoReal"));
+                variosProduto.add(dbProduto);
+            }
+            return variosProduto;
+            
+        } catch (SQLException sqle) {
+            System.out.println("Erro ao efetuar a busca no banco de dados: " + sqle.getMessage());
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Produto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return variosProduto;
+    }
+
+
+    public String getImagem() {
+        return imagem;
+    }
+
+    public void setImagem(String imagem) {
+        this.imagem = imagem;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }
