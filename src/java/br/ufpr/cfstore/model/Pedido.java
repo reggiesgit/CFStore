@@ -6,7 +6,6 @@
 package br.ufpr.cfstore.model;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * Esta classe define atributos e metodos do Pedido.
@@ -16,7 +15,8 @@ public class Pedido extends Pessoa {
     private Date dataPedido;
     private Date dataAtualizacao;
     private boolean aprovado;
-    private List <ItemPedido> itens;
+    private int numeroDeItens;
+    private double valorTotal;
 
     public Date getDataPedido() {
         return dataPedido;
@@ -42,17 +42,20 @@ public class Pedido extends Pessoa {
         this.aprovado = aprovado;
     }
 
-    public List <ItemPedido> getItens() {
-        return itens;
+    public int getNumeroDeItens() {
+        return numeroDeItens;
     }
 
-    public void setItens(List <ItemPedido> itens) {
-        this.itens = itens;
+    public void setNumeroDeItens(int numeroDeItens) {
+        this.numeroDeItens = numeroDeItens;
+    }
+
+    public double getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(double valorTotal) {
+        this.valorTotal = valorTotal;
     }
     
-    public void adicionaNoCarrinho(ItemPedido item){
-        
-    }
-
-       
 }
